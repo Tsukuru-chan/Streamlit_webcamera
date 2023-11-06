@@ -9,4 +9,4 @@ webrtc_streamer(
     rtc_configuration={  # この設定を足す
         "iceServers": [{"urls": ["stun:stun.l.google.com:19302"]}]
     }
-)git remote add origin
+)
