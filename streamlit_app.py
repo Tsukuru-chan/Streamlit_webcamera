@@ -31,6 +31,13 @@ class VideoProcessor:
 
         return av.VideoFrame.from_ndarray(img, format="bgr24")
 
+st.set_page_config(page_title="WebCamera-GPT4Vsion")
+st.title('WebCamera-GPT4Vsion')
+st.markdown("**操作説明**")
+st.write("右下の[SELECT DEVICE]からWebカメラの種類やスマホならインカメ、アウトカメラを設定できます。")
+st.write("初回などはブラウザやスマホの権限確認が出ますので許可をしてから[START]を押してください")
+st.write("[Capture Frame]ボタンを2回押すとAPIの処理が走って状況説明文を生成します。")
+
 video_processor = VideoProcessor()
 webrtc_ctx = webrtc_streamer(key="example", video_processor_factory=VideoProcessor, rtc_configuration=RTC_CONFIGURATION)
 
@@ -70,3 +77,5 @@ if webrtc_ctx.video_processor:
             webrtc_ctx.video_processor.image_saved = False
         else:
             st.write(f"画像ファイルが存在しません: {webrtc_ctx.video_processor.image_path}")
+            
+st.markdown("**※プロトタイプなのでエラーが頻発したりOpenAI APIのUsage Limitが来たら使えなくなります**")
