@@ -3,8 +3,14 @@ from streamlit_webrtc import webrtc_streamer, RTCConfiguration
 import cv2
 import av
 import os
+from openai import OpenAI
+from dotenv import load_dotenv
+import base64
 
 RTC_CONFIGURATION = RTCConfiguration({"iceServers": [{"urls": ["stun:stun.l.google.com:19302"]}]})
+load_dotenv()
+
+openai = OpenAI(api_key=os.getenv('OPENAI_API_KEY'))
 
 class VideoProcessor:
     def __init__(self):
@@ -37,6 +43,30 @@ if webrtc_ctx.video_processor:
     if webrtc_ctx.video_processor.image_saved:
         if os.path.exists(webrtc_ctx.video_processor.image_path):
             st.image(webrtc_ctx.video_processor.image_path)
+
+            # 画像を読み込み、base64に変換する
+            with open(webrtc_ctx.video_processor.image_path, "rb") as img_file:
+                base64_image = base64.b64encode(img_file.read()).decode("utf-8")
+
+            # OpenAI APIにリクエストを送信する
+            
+            with st.spinner('OpenAI APIにリクエストを送信中...'):
+                response = openai.chat.completions.create(
+                    model="gpt-4-vision-preview",
+                    messages=[
+                        {
+                            "role": "user",
+                            "content": [
+                                "Please explain specifically what you see there and what the situation is. Please be sure to use Japanese. No comments other than explanations are accepted.",
+                                {"image": base64_image, "resize": 768},
+                            ],
+                        },
+                    ],
+                    max_tokens=500,
+                )
+            # レスポンスを表示する
+            st.write(response.choices[0].message.content)
+
             webrtc_ctx.video_processor.image_saved = False
         else:
             st.write(f"画像ファイルが存在しません: {webrtc_ctx.video_processor.image_path}")
