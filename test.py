@@ -3,7 +3,7 @@ from streamlit_webrtc import webrtc_streamer, RTCConfiguration
 import cv2
 import av
 import os
-
+#
 RTC_CONFIGURATION = RTCConfiguration({"iceServers": [{"urls": ["stun:stun.l.google.com:19302"]}]})
 
 class VideoProcessor:
